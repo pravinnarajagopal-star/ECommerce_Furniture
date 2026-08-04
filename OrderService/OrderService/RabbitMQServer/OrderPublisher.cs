@@ -12,33 +12,26 @@ public class OrderPublisher
         _connectionService = connectionService;
     }
 
-
     public async Task PublishAsync(OrderCreatedEvent order)
     {
         await using var connection =
-             _connectionService.CreateConnection();
+            await _connectionService.CreateConnectionAsync();
 
         await using var channel =
             await connection.CreateChannelAsync();
 
+        await channel.ExchangeDeclareAsync(
+            exchange: "order.exchange",
+            type: ExchangeType.Topic,
+            durable: true);
 
-        await channel.QueueDeclareAsync(
-            queue: "order_created_queue",
-            durable: true,
-            exclusive: false,
-            autoDelete: false
-        );
-
-
-        var message = JsonSerializer.Serialize(order);
-
-        var body = Encoding.UTF8.GetBytes(message);
-
+        var json = JsonSerializer.Serialize(order);
+        var body = Encoding.UTF8.GetBytes(json);
 
         await channel.BasicPublishAsync(
-            exchange: "",
-            routingKey: "order_created_queue",
-            body: body
-        );
+            exchange: "order.exchange",
+            routingKey: "order.created",
+            body: body);
     }
+
 }

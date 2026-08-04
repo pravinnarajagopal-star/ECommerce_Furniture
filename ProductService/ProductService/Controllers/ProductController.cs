@@ -26,7 +26,6 @@ namespace ProductService.Controllers
         }
 
         [HttpGet("{id}")]
-        [AllowAnonymous]
         public async Task<IActionResult> Get(int id)
         {
             var product = await _service.GetByIdAsync(id);
@@ -47,8 +46,11 @@ namespace ProductService.Controllers
         }
 
         [HttpPut]
+       
         public async Task<IActionResult> Put(Product product)
         {
+           
+            
             var result = await _service.UpdateAsync(product);
 
             return Ok(result);

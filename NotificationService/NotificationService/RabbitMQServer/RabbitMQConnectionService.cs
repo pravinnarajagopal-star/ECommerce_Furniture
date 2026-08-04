@@ -1,6 +1,6 @@
 ﻿using RabbitMQ.Client;
 
-namespace OrderService.RabbitMQServer
+namespace NotificationService.RabbitMQServer
 {
     public class RabbitMQConnectionService
     {
@@ -21,6 +21,7 @@ namespace OrderService.RabbitMQServer
                 Password = _configuration["RabbitMQ:Password"],
                 VirtualHost = _configuration["RabbitMQ:VirtualHost"]
             };
+
 
             return await factory.CreateConnectionAsync();
         }

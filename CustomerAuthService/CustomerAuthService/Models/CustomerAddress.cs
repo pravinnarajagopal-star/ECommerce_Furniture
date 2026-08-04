@@ -27,6 +27,6 @@
         public DateTime CreatedDate { get; set; }
 
         // Navigation property
-        public Customer Customer { get; set; }
+        //public Customer Customer { get; set; }
     }
 }

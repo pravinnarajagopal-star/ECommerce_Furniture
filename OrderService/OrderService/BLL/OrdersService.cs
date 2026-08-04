@@ -30,8 +30,23 @@ namespace OrderService.BLL
             { 
                 order.TotalAmount = order.OrderItems.Sum(x => x.Quantity * x.Price); 
                 foreach (var item in order.OrderItems) 
-                { 
+                {
+                    var product = await _productClient.GetProductAsync(item.ProductId);
                     item.CreatedDate = DateTime.Now;
+                    var productDto = new ProductDto
+                    {
+                        ProductId = product.ProductId,
+                        ProductName = product.ProductName,
+                        ImageUrl = product.ImageUrl,
+                        Quantity = product.Quantity - item.Quantity,
+                        Description=product.Description,
+                        Price=product.Price,
+                        Rating = product.Rating,
+                        StockAvailable=product.StockAvailable,
+                        Category=product.Category
+                         
+                    };
+                    var productUpdtae = await _productClient.UpdateProductAsync(productDto);
                 } 
             } return await _repository.AddAsync(order); 
         }

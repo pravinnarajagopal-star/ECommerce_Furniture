@@ -3,6 +3,7 @@ using CustomerAuthService.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using static CustomerAuthService.API.Controllers.LoginController;
 
 namespace CustomerAuthService.API.Controllers;
 
@@ -32,15 +33,25 @@ public class LoginController : ControllerBase
 
     }
 
+    public class LoginRequest
+    {
+        public string Email { get; set; } = string.Empty;
+
+        public string Password { get; set; } = string.Empty;
+    }
+
     [HttpPost]
     [AllowAnonymous]
-    [HttpPost("login")]
     public async Task<IActionResult> Login(LoginRequest request)
     {
         var result = await _auth.Login(
             request.Email,
             request.Password
         );
+
+        Console.WriteLine(result.user == null
+    ? "User NOT FOUND"
+    : $"Found: {result.user.Email}");
 
 
         if (!result.success)

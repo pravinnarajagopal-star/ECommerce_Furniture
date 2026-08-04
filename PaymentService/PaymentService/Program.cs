@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using PaymentService.BLL;
 using PaymentService.DAL;
 using PaymentService.RabbitMQServer;
+using PaymentService.RabbitMQService;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -50,6 +51,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseSwagger();
+
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Payment API v1");
+});
+
 app.UseHttpsRedirection();
 
 app.UseCors("AllowAngular");
@@ -58,5 +66,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
 
 app.Run();

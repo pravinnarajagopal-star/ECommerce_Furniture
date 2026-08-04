@@ -31,15 +31,35 @@ builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IOrderService, OrdersService>();
 
 
+//builder.Services.AddHttpClient<IUserServiceClient, UserServiceClient>(client =>
+//{
+//    client.BaseAddress = new Uri("https://localhost:5001/");
+//});
+
+
+//builder.Services.AddHttpClient<IProductApiClient, ProductApiClient>(client =>
+//{
+//    client.BaseAddress = new Uri("https://localhost:5002/");
+//});
+
+
+var productServiceUrl = builder.Configuration["ProductServiceUrl"]
+                        ?? "http://productservice:8080/";
+
+var customerServiceUrl = builder.Configuration["CustomerAuthServiceUrl"]
+                         ?? "http://customerauthservice:8080/";
+
 builder.Services.AddHttpClient<IUserServiceClient, UserServiceClient>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:5001/");
+    client.BaseAddress = new Uri(customerServiceUrl);
 });
 
 builder.Services.AddHttpClient<IProductApiClient, ProductApiClient>(client =>
 {
-    client.BaseAddress = new Uri("https://localhost:5002/");
+    client.BaseAddress = new Uri(productServiceUrl);
 });
+
+
 
 
 builder.Services.AddAuthentication("Bearer")
@@ -73,10 +93,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAngular",
         policy =>
         {
-            policy
-                .WithOrigins("http://localhost:4200")
-                .AllowAnyHeader()
-                .AllowAnyMethod();
+            policy.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
         });
 });
 
@@ -95,7 +114,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+app.UseSwagger();
+
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Order API v1");
+});
+
+// app.UseHttpsRedirection();
 
 app.UseCors("AllowAngular");
 
@@ -103,5 +129,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
 
 app.Run();

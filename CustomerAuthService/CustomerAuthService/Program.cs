@@ -5,6 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
+
+Console.WriteLine("====================================");
+Console.WriteLine("NEW BUILD DEPLOYED");
+Console.WriteLine("====================================");
+
 var builder = WebApplication.CreateBuilder(args);
 
 // DbContext
@@ -70,7 +75,12 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseSwagger();
 
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Customer API v1");
+});
 app.UseHttpsRedirection();
 app.UseCors("AngularPolicy");
 
@@ -79,5 +89,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
 
 app.Run();
